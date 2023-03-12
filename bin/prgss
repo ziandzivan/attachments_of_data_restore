@@ -1,0 +1,5 @@
+#!/dev/temp/bsh/bash
+
+progress() { echo "progress $1 $2" > $console; }
+n_count=`cat  "${D_bin}/count"`; tstr=( `tail -n 1 "${D_bin}/err_file"` ); c_size="${tstr[${#tstr[@]}-4]}"; c_count=`expr $c_size / $N_bytes`;
+[ "$c_count" -gt "$n_count" ] && { progress 0.0200 0; n_count=`expr $n_count + 1`; echo "$n_count" > "${D_bin}/count"; }

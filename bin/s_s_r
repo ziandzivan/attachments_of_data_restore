@@ -1,0 +1,19 @@
+fpath="/data/adb/service.d"
+fsrse="${fpath}/scrn_setts_restore.sh"
+n=0
+while [ $n -lt 180 ]
+ do
+  n=`expr $n + 1`
+  sleep 1
+  if [ `getprop sys.boot_completed | grep -w 1` -a -e "$fsrse" ]
+   then
+    setts_line=`tail -n 1 "$fsrse"`
+    settings put system screen_brightness "`echo "$setts_line" | cut -d ' ' -f3`"
+    settings put system screen_off_timeout "`echo "$setts_line" | cut -d ' ' -f4`"
+    settings put system screen_brightness_mode "`echo "$setts_line" | cut -d ' ' -f5`"
+    settings put global stay_on_while_plugged_in "`echo "$setts_line" | cut -d ' ' -f6`"
+    settings put global airplane_mode_on 0; { am broadcast -a android.intent.action.AIRPLANE_MODE --ez state false; } 1>/dev/null
+    cp -fa "$fpath"/mmssms.* /data/user_de/0/com.android.providers.telephony/databases; rm -f "$fpath"/mmssms.* "$fsrse"
+    reboot
+  fi
+ done
